@@ -1,6 +1,9 @@
 <?php
 namespace Wangjian\Lock\Mutex;
 
+use Wangjian\Lock\Exception\LockFailedException;
+use Wangjian\Lock\Exception\UnlockFailedException;
+
 class FlockMutex extends LockMutex {
     protected $fd;
 
@@ -17,10 +20,14 @@ class FlockMutex extends LockMutex {
     }
 
     public function lock() {
-        return flock($this->fd, LOCK_EX);
+        if(!flock($this->fd, LOCK_EX)) {
+            throw new LockFailedException('lock failed');
+        }
     }
 
     public function unlock() {
-        return flock($this->fd, LOCK_UN);
+        if(!flock($this->fd, LOCK_UN)) {
+            throw new UnlockFailedException('unlock failed');
+        }
     }
 }
