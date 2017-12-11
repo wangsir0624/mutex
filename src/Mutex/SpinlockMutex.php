@@ -1,26 +1,23 @@
 <?php
-namespace Wangjian\Lock;
+namespace Wangjian\Lock\Mutex;
 
 use Wangjian\Lock\Exception\UnlockFailedException;
 use Wangjian\Lock\Mutex\LockMutex;
 use Wangjian\Lock\Util\Loop;
 
 abstract class SpinlockMutex extends LockMutex {
-    protected $key;
+    protected $timeout;
 
     protected $loop;
 
-    public function __construct($key, $timeout = 0) {
-        $this->key = $key;
+    public function __construct($timeout = 0) {
         $this->timeout = $timeout;
         $this->loop = new Loop($timeout);
     }
 
     public function lock() {
         $this->loop->loop(function() {
-            if($this->acquire()) {
-                return true;
-            }
+            return $this->acquire();
         });
     }
 
