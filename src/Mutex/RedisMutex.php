@@ -1,7 +1,7 @@
 <?php
 namespace Wangjian\Lock\Mutex;
 
-use Predis\Client;
+use Wangjian\Lock\RedisAdapter\RedisAdapter;
 use Wangjian\Lock\Util\TokenGenerator;
 
 /**
@@ -9,7 +9,7 @@ use Wangjian\Lock\Util\TokenGenerator;
  * Class PredisMutex
  * @package Wangjian\Lock\Mutex
  */
-class PredisMutex extends SpinlockMutex {
+class RedisMutex extends SpinlockMutex {
     use TokenGenerator;
 
     const PREFIX = 'lock_';
@@ -21,10 +21,10 @@ class PredisMutex extends SpinlockMutex {
     protected $key;
 
     /**
-     * Predis client
-     * @var Client
+     * redis adapter
+     * @var RedisAdapter
      */
-    protected $client;
+    protected $adapter;
 
     /**
      * 锁最大生存期
@@ -34,15 +34,15 @@ class PredisMutex extends SpinlockMutex {
 
     /**
      * PredisMutex constructor
-     * @param Client $client  Predis client
+     * @param RedisAdapter $adapter
      * @param string $key  锁名称
      * @param int $timeout  超时时间，0表示关闭超时检测
      * @param int $maxLifetime  锁最大生存时间，防止程序异常退出时，锁得不到释放的问题
      */
-    public function __construct(Client $client, $key, $timeout = 0, $maxLifetime = 30) {
+    public function __construct(RedisAdapter $adapter, $key, $timeout = 0, $maxLifetime = 30) {
         parent::__construct($timeout);
         $this->key = self::PREFIX . $key;
-        $this->client = $client;
+        $this->adapter = $adapter;
         $this->maxLifetime = $maxLifetime;
     }
 
@@ -54,9 +54,9 @@ class PredisMutex extends SpinlockMutex {
         //生成随机token，防止别的进程解锁
         $this->refreshToken();
 
-        $result = $this->client->setnx($this->key, $this->token) > 0;
+        $result = $this->adapter->setnx($this->key, $this->token) > 0;
         if($result) {
-            $this->client->expire($this->key, $this->maxLifetime);
+            $this->adapter->expire($this->key, $this->maxLifetime);
         }
 
         return $result;
@@ -68,15 +68,15 @@ class PredisMutex extends SpinlockMutex {
      */
     public function release() {
         //如果锁没有被获取，则解锁失败
-        if(!$this->client->exists($this->key)) {
+        if(!$this->adapter->exists($this->key)) {
             return false;
         }
 
         //如果token不一致，解锁失败，防止其他进程解锁
-        if($this->client->get($this->key) != $this->token) {
+        if($this->adapter->get($this->key) != $this->token) {
             return false;
         }
 
-        return $this->client->del($this->key) > 0;
+        return $this->adapter->del($this->key) > 0;
     }
 }
