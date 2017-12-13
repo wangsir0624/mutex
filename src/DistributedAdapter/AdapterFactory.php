@@ -1,11 +1,11 @@
 <?php
-namespace Wangjian\Lock\RedisAdapter;
+namespace Wangjian\Lock\DistributedAdapter;
 
 use InvalidArgumentException;
 use Predis\Client;
 use Redis;
 
-class RedisAdapterFactory {
+class AdapterFactory {
     /**
      * 创建一个PhpRedisAdpater
      * @param string $dsn  连接字符串，格式为scheme://auth@host:port/db

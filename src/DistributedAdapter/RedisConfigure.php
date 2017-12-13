@@ -1,5 +1,5 @@
 <?php
-namespace Wangjian\Lock\RedisAdapter;
+namespace Wangjian\Lock\DistributedAdapter;
 
 /**
  * redis连接配置

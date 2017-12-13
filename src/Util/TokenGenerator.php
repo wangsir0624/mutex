@@ -22,6 +22,14 @@ trait TokenGenerator {
     }
 
     /**
+     * 获取token
+     * @return string
+     */
+    public function getToken() {
+        return $this->token;
+    }
+
+    /**
      * 刷新token的值
      *
      */
