@@ -6,7 +6,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 $lock = new \Wangjian\Lock\Mutex\FlockMutex($fd);*/
 
 //使用PredisMutex
-$adapter = \Wangjian\Lock\DistributedAdapter\AdapterFactory::createPredisAdapter('tcp://root@127.0.0.1:6379/1');
+$adapter = \Wangjian\Lock\DistributedAdapter\AdapterFactory::createAdapter('redis://root@127.0.0.1:6379/1');
 $lock = new \Wangjian\Lock\Mutex\DistributedMutex($adapter, 'test_lock', 0);
 
 //$lock->unlock();

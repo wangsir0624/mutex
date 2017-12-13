@@ -6,7 +6,7 @@ namespace Wangjian\Lock\DistributedAdapter;
  * Class RedisConfigure
  * @package Wangjian\Lock\RedisAdapter
  */
-class RedisConfigure {
+class ConnectionConfigure {
     /**
      * scheme
      * @var string
