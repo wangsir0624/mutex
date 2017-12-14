@@ -9,7 +9,6 @@ $lock = new \Wangjian\Lock\Mutex\FlockMutex($fd);*/
 $adapter = \Wangjian\Lock\DistributedAdapter\AdapterFactory::createAdapter('redis://root@127.0.0.1:6379/1');
 $lock = new \Wangjian\Lock\Mutex\DistributedMutex($adapter, 'test_lock', 0);
 
-//$lock->unlock();
 $lock->synchronized(function() {
    for($i = 0; $i < 10; $i++) {
        echo 1 . PHP_EOL;

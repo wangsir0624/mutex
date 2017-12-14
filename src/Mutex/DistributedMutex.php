@@ -51,6 +51,9 @@ class DistributedMutex extends SpinlockMutex {
      * @return bool  获取成功，返回true，反之返回false
      */
     public function acquire() {
+        //生成随机token，防止别的进程解锁
+        $this->refreshToken();
+
         return $this->adapter->acquire($this);
     }
 

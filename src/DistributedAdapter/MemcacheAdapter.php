@@ -16,9 +16,6 @@ class MemcacheAdapter extends Adapter {
     }
 
     public function acquire(DistributedMutex $mutex) {
-        //生成随机token，防止别的进程解锁
-        $mutex->refreshToken();
-
         return $this->client->add($mutex->getKey(), $mutex->getToken(), 0, $mutex->getMaxLifeTime());
     }
 
