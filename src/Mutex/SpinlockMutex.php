@@ -36,9 +36,7 @@ abstract class SpinlockMutex extends LockMutex {
      * 获取互斥锁
      */
     public function lock() {
-        $this->loop->loop(function() {
-            return $this->acquire();
-        });
+        $this->loop->loop([$this, 'acquire']);
     }
 
     /**
